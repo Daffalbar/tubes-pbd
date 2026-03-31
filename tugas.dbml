@@ -1,0 +1,119 @@
+Table pelanggan {
+  id integer [primary key]
+  nama string [not null]
+  nomor_telepon string [not null]
+  email string [not null]
+  member boolean
+}
+
+Table pesanan {
+  id integer [primary key]
+  pelanggan_id integer [not null]
+  total_harga integer [not null]
+  diskon_id integer
+  metode_bayar enum("tunai", "kartu", "qris")
+  status_masak enum("antrian", "dimasak", "selesai")
+  tipe_pesanan enum("dine_in", "take_away")
+  tanggal timestamp
+}
+
+Table pegawai {
+  id integer [primary key]
+  nama string [not null]
+  nomor_telepon string [not null]
+  email string [not null]
+  alamat text [not null]
+  tempat_tanggal_lahir string [not null]
+  jenis_kelamin enum("pria", "wanita")
+  jabatan enum("kasir", "koki", "pelayan", "manajer_cabang")
+}
+
+Table menu {
+  id integer [primary key]
+  nama string [not null]
+  kategori enum("makanan", "minuman") [not null]
+  harga integer [not null]
+  ketersediaan enum("tersedia", "habis") [not null]
+}
+
+Table meja {
+  id integer [primary key]
+  kapasitas integer [not null]
+}
+
+Table diskon {
+  id integer [primary key]
+  nama_diskon string [not null]
+  potongan integer [not null]
+  dibuat_pada timestamp
+}
+
+Table diskon_menu {
+  id integer [primary key]
+  diskon_id integer
+  menu_id integer
+}
+
+Table bahan_baku {
+  id integer [primary key]
+  nama string [not null]
+  kategori string
+  stok integer
+  satuan enum("kg", "liter", "gram", "bungkus")
+}
+
+Table resep {
+  id integer [primary key]
+  menu_id integer
+  bahan_baku_id integer
+  jumlah integer
+}
+
+Table detail_pesanan {
+  id integer [primary key]
+  pesanan_id integer [not null]
+  menu_id integer [not null]
+  jumlah integer [not null]
+  harga integer [not null]
+}
+
+Table reservasi {
+  id integer [primary key]
+  tanggal date
+  jam time
+  jumlah_orang integer
+  pelanggan_id integer
+  meja_id integer
+}
+
+Table pemasok {
+  id integer [primary key]
+  nama string
+}
+
+Table detail_pemasok {
+  id integer [primary key]
+  bahan_baku_id integer
+  pemasok_id integer
+}
+
+Table detail_penugasan {
+  id integer [primary key]
+  pesanan_id integer [not null]
+  pegawai_id integer [not null]
+}
+
+Ref: pelanggan.id < pesanan.pelanggan_id
+Ref: pesanan.id < detail_pesanan.pesanan_id
+Ref: menu.id < detail_pesanan.menu_id
+Ref: pesanan.id < detail_penugasan.pesanan_id
+Ref: pegawai.id < detail_penugasan.pegawai_id
+Ref: diskon.id < pesanan.diskon_id
+Ref: diskon.id < diskon_menu.diskon_id
+Ref: menu.id < diskon_menu.menu_id
+Ref: menu.id < resep.menu_id
+Ref: bahan_baku.id < resep.bahan_baku_id
+Ref: bahan_baku.id < detail_pemasok.bahan_baku_id
+Ref: pemasok.id < detail_pemasok.pemasok_id
+Ref: pelanggan.id < reservasi.pelanggan_id
+Ref: meja.id < reservasi.meja_id
