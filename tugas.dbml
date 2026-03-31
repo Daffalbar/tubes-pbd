@@ -23,7 +23,7 @@ Table pegawai {
   nomor_telepon string [not null]
   email string [not null]
   alamat text [not null]
-  tempat_tanggal_lahir string [not null]
+  tempat_tanggal_lahir time [not null]
   jenis_kelamin enum("pria", "wanita")
   jabatan enum("kasir", "koki", "pelayan", "manajer_cabang")
 }
@@ -38,6 +38,7 @@ Table menu {
 
 Table meja {
   id integer [primary key]
+  pelanggan_id integer [not null]
   kapasitas integer [not null]
 }
 
@@ -57,7 +58,7 @@ Table diskon_menu {
 Table bahan_baku {
   id integer [primary key]
   nama string [not null]
-  kategori string
+  kategori enum("")
   stok integer
   satuan enum("kg", "liter", "gram", "bungkus")
 }
@@ -66,6 +67,7 @@ Table resep {
   id integer [primary key]
   menu_id integer
   bahan_baku_id integer
+  pemasok_id integer
   jumlah integer
 }
 
@@ -79,8 +81,8 @@ Table detail_pesanan {
 
 Table reservasi {
   id integer [primary key]
-  tanggal date
-  jam time
+  tanggal_reservasi integer
+  jam_reservasi integer
   jumlah_orang integer
   pelanggan_id integer
   meja_id integer
@@ -97,17 +99,28 @@ Table detail_pemasok {
   pemasok_id integer
 }
 
+Table laporan {
+  id integer [primary key]
+  pesanan_id integer
+  jumlah integer
+  total integer
+}
+
 Table detail_penugasan {
   id integer [primary key]
   pesanan_id integer [not null]
   pegawai_id integer [not null]
+  jumlah integer [not null]
+  harga integer [not null]
 }
 
 Ref: pelanggan.id < pesanan.pelanggan_id
+Ref: pelanggan.id < meja.pelanggan_id
 Ref: pesanan.id < detail_pesanan.pesanan_id
 Ref: menu.id < detail_pesanan.menu_id
 Ref: pesanan.id < detail_penugasan.pesanan_id
 Ref: pegawai.id < detail_penugasan.pegawai_id
+Ref: laporan.pesanan_id < pesanan.id
 Ref: diskon.id < pesanan.diskon_id
 Ref: diskon.id < diskon_menu.diskon_id
 Ref: menu.id < diskon_menu.menu_id
